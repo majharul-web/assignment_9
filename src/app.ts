@@ -1,38 +1,38 @@
-import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
-import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import routes from './app/routes';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
-// Middleware
 app.use(cors());
-app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+//parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Routes
+app.use('/api/v1', routes);
 
-// test error
-app.get('/', async (req: Request, res: Response) => {
-  res.send('Hello world');
-  // Promise.reject(new Error('Unhandled promise rejection'));
-  // throw new ApiError(400, 'Something went wrong');
-  // next('something went wrong');
-  // throw new Error('Something went wrong');
-});
-
-// Error handler
+//global error handler
 app.use(globalErrorHandler);
 
-// handle not found routes
+// Home route
+app.get('/', async (req: Request, res: Response) => {
+  res.send('Welcome to Prisma Book Catallog');
+});
+
+//handle not found
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(httpStatus.NOT_FOUND).json({
     success: false,
-    message: 'Not found',
+    message: 'Not Found',
     errorMessages: [
       {
         path: req.originalUrl,
-        message: 'API not found',
+        message: 'API Not Found',
       },
     ],
   });
