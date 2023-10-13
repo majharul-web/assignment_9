@@ -12,4 +12,9 @@ router.post(
   CustomerController.createCustomer
 );
 
+router.delete('/:id', CustomerController.deleteCustomer);
+router.patch('/:id', CustomerController.updateCustomer);
+router.get('/', CustomerController.getAllCustomers);
+
+router.get('/:id', CustomerController.getSingleCustomer);
 export const CustomerRoutes = router;
