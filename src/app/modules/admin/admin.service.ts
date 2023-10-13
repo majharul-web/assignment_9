@@ -187,9 +187,6 @@ const deleteAdmin = async (id: string): Promise<Admin | null> => {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Unable to delete admin');
     }
 
-    // if(deleteAdmin.length){
-
-    // }
     return deleteAdmin;
   });
 

@@ -1,11 +1,6 @@
-export const customerSearchableFields: string[] = [
-  'name',
-  'email',
-  'contactNo',
-  'role',
-];
+export const userSearchableFields: string[] = ['email', 'role'];
 
-export const customerFilterableFields: string[] = [
+export const userFilterableFields: string[] = [
   'search',
-  ...customerSearchableFields,
+  ...userSearchableFields,
 ];
