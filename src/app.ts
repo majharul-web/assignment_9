@@ -21,7 +21,7 @@ app.use(globalErrorHandler);
 
 // Home route
 app.get('/', async (req: Request, res: Response) => {
-  res.send('Welcome to Prisma Book Catallog');
+  res.send('Welcome to Prisma Assignment-9');
 });
 
 //handle not found

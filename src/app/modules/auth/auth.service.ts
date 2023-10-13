@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Admin, Customer, User } from '@prisma/client';
 import prisma from '../../../shared/prisma';
 import bcrypt from 'bcrypt';
 import config from '../../../config';
@@ -9,7 +9,10 @@ import ApiError from '../../../errors/ApiError';
 import { ILogin, ILoginResponse } from './auth.interface';
 import { isPasswordMatched } from './auth.utils';
 
-const signUp = async (userData: User): Promise<Partial<User> | null> => {
+const signUp = async (
+  adminData: Customer,
+  userData: User
+): Promise<Partial<User & Admin> | null> => {
   const hashedPassword = await bcrypt.hash(
     userData.password,
     Number(config.bycrypt_salt_rounds)
@@ -17,20 +20,41 @@ const signUp = async (userData: User): Promise<Partial<User> | null> => {
 
   userData.password = hashedPassword;
 
-  const result = await prisma.user.create({
-    data: userData,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      contactNo: true,
-      address: true,
-      profileImg: true,
-    },
+  const newUser = await prisma.$transaction(async transactionClient => {
+    const user = await transactionClient.user.create({
+      data: userData,
+    });
+
+    if (!user) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Unable to create user');
+    }
+    adminData.userId = user.id;
+    await transactionClient.customer.create({
+      data: adminData,
+    });
+
+    return user;
   });
 
-  return result;
+  if (newUser) {
+    const responseData = await prisma.customer.findUnique({
+      where: {
+        email: newUser.email,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    return responseData;
+  }
+
+  throw new ApiError(httpStatus.BAD_REQUEST, 'Unable to create admin');
 };
 
 const signIn = async (payload: ILogin): Promise<ILoginResponse> => {

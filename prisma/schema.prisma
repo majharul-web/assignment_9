@@ -13,20 +13,52 @@ datasource db {
 enum userRole {
   customer
   admin
+  super_admin
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  role      userRole   @default(customer)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Admin     Admin[]
+  Customer  Customer[]
+
+  @@map("users")
+}
+
+model Admin {
+  id         String  @id @default(uuid())
   name       String
-  email      String   @unique
-  password   String
-  role       userRole @default(customer)
+  email      String  @unique
   contactNo  String
   address    String
   profileImg String?
+  userId     String
 
+  // Define foreign keys to relate the model to other tables if needed
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
+  @@map("admins")
+}
+
+model Customer {
+  id         String  @id @default(uuid())
+  name       String
+  email      String  @unique
+  contactNo  String
+  address    String
+  profileImg String?
+  userId     String
+
+  // Define foreign keys to relate the model to other tables if needed
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customers")
 }

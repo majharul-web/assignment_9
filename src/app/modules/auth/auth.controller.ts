@@ -1,19 +1,31 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import catchAsync from '../../../shared/catchAsync';
-import sendResponse, { sendLginResponse } from '../../../shared/sendResponse';
+import sendResponse from '../../../shared/sendResponse';
 import { AuthService } from './auth.service';
-import { User } from '@prisma/client';
+import { Customer, User } from '@prisma/client';
 import config from '../../../config';
+import { ILoginResponse } from './auth.interface';
 
 const signUp = catchAsync(async (req: Request, res: Response) => {
-  const userData = req.body;
-  const result = await AuthService.signUp(userData);
+  const { email, role, password, ...adminData } = req.body;
 
-  sendResponse<Partial<User>>(res, {
+  const userInfo = {
+    email,
+    role,
+    password,
+  };
+  adminData.email = email;
+  const result = await AuthService.signUp(adminData, userInfo as User);
+
+  console.log({
+    result,
+  });
+
+  sendResponse<Partial<User & Customer>>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User created successfully!',
+    message: 'admin created successfully!',
     data: result,
   });
 });
@@ -32,13 +44,14 @@ const signIn = catchAsync(async (req: Request, res: Response) => {
   };
   res.cookie('refreshToken', refreshToken, cookieOptions);
 
-  sendLginResponse<any>(res, {
+  sendResponse<ILoginResponse>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'User signin successfully!',
-    token: others.accessToken,
+    data: others,
   });
 });
+
 export const AuthController = {
   signUp,
   signIn,

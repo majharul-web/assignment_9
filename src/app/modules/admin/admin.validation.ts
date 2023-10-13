@@ -1,12 +1,14 @@
-import { userRole } from '@prisma/client';
 import { z } from 'zod';
+import { adminRole } from './admin.interface';
 
-const createUserZodSchema = z.object({
+const createAdminZodSchema = z.object({
   body: z.object({
     name: z.string(),
     email: z.string().email(),
     password: z.string(),
-    role: z.enum([...Object.values(userRole)] as [string, ...string[]], {}),
+    role: z.enum([...adminRole] as [string, ...string[]], {
+      required_error: 'role is required',
+    }),
     contactNo: z
       .string({
         required_error: 'Phone number is required',
@@ -19,14 +21,12 @@ const createUserZodSchema = z.object({
   }),
 });
 
-const updateUserZodSchema = z.object({
+const updateAdminZodSchema = z.object({
   body: z.object({
     name: z.string().optional(),
     email: z.string().email().optional(),
     password: z.string().optional(),
-    role: z
-      .enum([...Object.values(userRole)] as [string, ...string[]], {})
-      .optional(),
+    role: z.enum([...adminRole] as [string, ...string[]], {}).optional(),
     contactNo: z
       .string()
       .optional()
@@ -41,7 +41,7 @@ const updateUserZodSchema = z.object({
   }),
 });
 
-export const UserValidation = {
-  createUserZodSchema,
-  updateUserZodSchema,
+export const AdminValidation = {
+  createAdminZodSchema,
+  updateAdminZodSchema,
 };
