@@ -1,4 +1,4 @@
-//['page','size','sortBy','sortOrder']
+//['page','limit','sortBy','sortOrder']
 
 const pick = <T extends Record<string, unknown>, k extends keyof T>(
   obj: T,

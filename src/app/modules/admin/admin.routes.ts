@@ -12,4 +12,10 @@ router.post(
   AdminController.createAdmin
 );
 
+router.delete('/:id', AdminController.deleteAdmin);
+router.patch('/:id', AdminController.updateAdmin);
+router.get('/', AdminController.getAllAdmins);
+
+router.get('/:id', AdminController.getSingleAdmin);
+
 export const AdminRoutes = router;

@@ -35,7 +35,7 @@ const createCustomer = catchAsync(async (req: Request, res: Response) => {
 
 const getAllCustomers = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, customerFilterableFields);
-  const options = pick(req.query, ['size', 'page', 'sortBy', 'sortOrder']);
+  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
   const result = await CustomerService.getAllCustomers(filters, options);
   sendResponse(res, {
     statusCode: httpStatus.OK,
