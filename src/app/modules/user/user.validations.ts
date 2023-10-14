@@ -8,14 +8,16 @@ const createUserZodSchema = z.object({
     password: z.string(),
     role: z.enum([...Object.values(userRole)] as [string, ...string[]], {}),
     contactNo: z
-      .string({
-        required_error: 'Phone number is required',
-      })
-      .refine(value => /^(?:\+?88)?01[13-9]\d{8}$/.test(value), {
-        message: 'Invalid Bangladeshi phone number',
-      }),
-    address: z.string(),
-    profileImg: z.string(),
+      .string()
+      .optional()
+      .refine(
+        value => value === undefined || /^(?:\+?88)?01[13-9]\d{8}$/.test(value),
+        {
+          message: 'Invalid Bangladeshi phone number',
+        }
+      ),
+    address: z.string().optional(),
+    profileImg: z.string().optional(),
   }),
 });
 

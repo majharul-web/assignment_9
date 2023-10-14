@@ -18,6 +18,14 @@ const createCustomer = async (
   customerData: Customer,
   userData: User
 ): Promise<Partial<User & Admin> | null> => {
+  const alreayUser = await prisma.user.findUnique({
+    where: {
+      email: userData.email,
+    },
+  });
+  if (alreayUser) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Already have an account');
+  }
   const hashedPassword = await bcrypt.hash(
     userData.password,
     Number(config.bycrypt_salt_rounds)

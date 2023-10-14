@@ -51,8 +51,8 @@ model Customer {
   id         String  @id @default(uuid())
   name       String
   email      String  @unique
-  contactNo  String
-  address    String
+  contactNo  String?
+  address    String?
   profileImg String?
   userId     String
 
